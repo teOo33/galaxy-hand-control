@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galaxy Hand Control</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <video id="input-video" playsinline></video>
+    <canvas id="webgl-canvas"></canvas>
+    <canvas id="debug-canvas"></canvas>
+
+    <div class="hud">
+      <h1>Galaxy Hand Control</h1>
+      <p>
+        دست راست: چرخش + نور | دست چپ: فاصله و تراکم ستاره‌ها | ژست قلب با دو دست:
+        تبدیل به <strong>mozhgani</strong>
+      </p>
+      <p id="status">در حال آماده‌سازی دوربین...</p>
+    </div>
+  </body>
+</html>
