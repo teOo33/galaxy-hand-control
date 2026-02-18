@@ -14,6 +14,8 @@ const state = {
   heartHold: 0,
 };
 
+let isHandsProcessing = false;
+
 const lastHands = {
   right: null,
   left: null,
@@ -188,7 +190,9 @@ function updateHands(landmarks, handednesses) {
 
   for (let i = 0; i < landmarks.length; i += 1) {
     const hand = landmarks[i];
-    const side = handednesses[i][0].label.toLowerCase();
+    const handedness = handednesses[i]?.[0]?.label;
+    if (!handedness) continue;
+    const side = handedness.toLowerCase();
     if (side === "left" || side === "right") {
       lastHands[side] = hand;
     }
@@ -237,7 +241,7 @@ function detectHeartGesture(left, right) {
 
 function onHandsResults(results) {
   debugCtx.clearRect(0, 0, debugCanvas.width, debugCanvas.height);
-  if (results.multiHandLandmarks) {
+  if (results?.multiHandLandmarks) {
     for (const marks of results.multiHandLandmarks) {
       drawConnectors(debugCtx, marks, HAND_CONNECTIONS, {
         color: "rgba(130, 220, 255, 0.65)",
@@ -256,15 +260,21 @@ const hands = new Hands({
 
 hands.setOptions({
   maxNumHands: 2,
-  modelComplexity: 1,
-  minDetectionConfidence: 0.7,
-  minTrackingConfidence: 0.7,
+  modelComplexity: 0,
+  minDetectionConfidence: 0.65,
+  minTrackingConfidence: 0.55,
 });
 hands.onResults(onHandsResults);
 
 const cam = new Camera(videoEl, {
   onFrame: async () => {
-    await hands.send({ image: videoEl });
+    if (isHandsProcessing) return;
+    isHandsProcessing = true;
+    try {
+      await hands.send({ image: videoEl });
+    } finally {
+      isHandsProcessing = false;
+    }
   },
   width: 1280,
   height: 720,
