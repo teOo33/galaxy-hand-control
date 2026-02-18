@@ -21,6 +21,22 @@ const lastHands = {
   left: null,
 };
 
+const IS_SELFIE_VIEW = true;
+
+function normalizeHandLabel(handednessEntry) {
+  if (!handednessEntry) return null;
+  if (Array.isArray(handednessEntry)) {
+    return handednessEntry[0]?.label?.toLowerCase?.() ?? null;
+  }
+  return handednessEntry.label?.toLowerCase?.() ?? null;
+}
+
+function mapHandSide(label) {
+  if (label !== "left" && label !== "right") return null;
+  if (!IS_SELFIE_VIEW) return label;
+  return label === "left" ? "right" : "left";
+}
+
 const renderer = new THREE.WebGLRenderer({
   canvas: document.getElementById("webgl-canvas"),
   antialias: true,
@@ -190,10 +206,9 @@ function updateHands(landmarks, handednesses) {
 
   for (let i = 0; i < landmarks.length; i += 1) {
     const hand = landmarks[i];
-    const handedness = handednesses[i]?.[0]?.label;
-    if (!handedness) continue;
-    const side = handedness.toLowerCase();
-    if (side === "left" || side === "right") {
+    const rawLabel = normalizeHandLabel(handednesses[i]);
+    const side = mapHandSide(rawLabel);
+    if (side) {
       lastHands[side] = hand;
     }
   }
